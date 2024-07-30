@@ -1,11 +1,4 @@
-import telebot
-from telebot import types
-import traceback
-
-from binance.um_futures import UMFutures
 from pybit.unified_trading import HTTP
-from binance.client import Client
-import time
 import requests
 
 def G1(message,bot,gl_pr,black,pr):
