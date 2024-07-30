@@ -1,14 +1,8 @@
-import telebot
-from telebot import types
 import traceback
-import time
-from binance.um_futures import UMFutures
 from pybit.unified_trading import HTTP
-from binance.client import Client
 import requests
 import threading
 import time
-import schedule
 import telebot
 from telebot import types
 import datetime
