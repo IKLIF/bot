@@ -52,7 +52,7 @@ def GO_1(message,bot,gl_pr,x):
     now = datetime.datetime.now()
     print(f'опрос № {x}: {now.strftime("%d-%m-%Y %H:%M:%S")}')
     x += 1
-    pr = 0.5
+    pr = 1.2
 
     conn = sqlite3.connect('users.db', check_same_thread=False)
     cursor = conn.cursor()
