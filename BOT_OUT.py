@@ -6,7 +6,7 @@ import time
 import telebot
 from telebot import types
 import datetime
-
+import sys
 from GOGO import G1,G2,G3,moex
 
 
@@ -52,7 +52,7 @@ def GO_1(message,bot,gl_pr,x):
     now = datetime.datetime.now()
     print(f'опрос № {x}: {now.strftime("%d-%m-%Y %H:%M:%S")}')
     x += 1
-    pr = 1.3
+    pr = 0.5
 
     conn = sqlite3.connect('users.db', check_same_thread=False)
     cursor = conn.cursor()
@@ -114,6 +114,11 @@ def GOY(message):
     else:
         bot.send_message(message.chat.id, 'Вы уже подписаны!')
 
+
+@bot.message_handler(commands=['STOP'] )
+def STOP(message):
+    bot.send_message(message.chat.id,'stop')
+    sys.exit()
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback(call):
