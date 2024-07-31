@@ -113,7 +113,7 @@ def G2(message,bot,gl_pr,black,pr):
                 elif z > 0:
                     pass
 
-                if z >= pr and z <= gl_pr:
+                if z >= pr and z <= gl_pr and x > y:
                     txt = txt + f"<code>{bin['symbol']}</code>:  {z}% \n⚡️<u>Binance:</u> <b>{bin['price']}</b> SPOT \n⚡️<u>ByBit:</u> <b>{by['price']}</b> FUTURES \n\n"
     if txt == '📌ОПОВЕЩЕНИЕ!📌\n\n':
         return None
@@ -171,7 +171,7 @@ def G3(message,bot,gl_pr,black,pr):
                 elif z > 0:
                     pass
 
-                if z >= pr and z <= gl_pr:
+                if z >= pr and z <= gl_pr and x < y:
                     txt = txt + f"<code>{bin['symbol']}</code>:  {z}% \n⚡️<u>Binance:</u> <b>{bin['price']}</b> FUTURES \n⚡️<u>ByBit:</u> <b>{by['price']}</b> SPOT \n\n"
     if txt == '📌ОПОВЕЩЕНИЕ!📌\n\n':
         return None
