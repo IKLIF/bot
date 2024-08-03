@@ -30,7 +30,7 @@ cursor.execute('CREATE TABLE IF NOT EXISTS parametrs ('
 x0 = 0
 x1 = 2
 x2 = 2
-x3 = -4257163228
+x3 = -4257168423
 cursor.execute('SELECT * FROM parametrs')
 if cursor.fetchone() == None:
     cursor.execute('INSERT INTO parametrs (nam, pr_max, pr_min, chat_main_id) VALUES (?,?,?,?)', (x0, x1,x2,x3,))
