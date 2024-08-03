@@ -252,9 +252,9 @@ def main(kol_vo):
             markup = types.InlineKeyboardMarkup()
 
             b1 = types.InlineKeyboardButton(text='TV',
-                                            url=f'https://ru.tradingview.com/chart/{result_get_open_interest[0]['symbol']}.P')
+                                            url=f"https://ru.tradingview.com/chart/{result_get_open_interest[0]['symbol']}.P")
             b2 = types.InlineKeyboardButton(text='CG',
-                                            url=f'https://www.coinglass.com/tv/ru/Binance_{result_get_open_interest[0]['symbol']}')
+                                            url=f"https://www.coinglass.com/tv/ru/Binance_{result_get_open_interest[0]['symbol']}")
 
             markup.add(b1, b2)
 
@@ -278,11 +278,11 @@ def main(kol_vo):
 
                 if result_trades != 'NONE' and result_volue != 'NONE':
                     bot.send_message(chat_main_id,
-                                     f'🟩📈<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 4ч: {kol_vo_nam}',
+                                     f"🟩📈<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 4ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
                 else:
                     bot.send_message(chat_main_id,
-                                     f'🟩📈<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n\n{zzzz_vol}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 4ч: {kol_vo_nam}',
+                                     f"🟩📈<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n\n{zzzz_vol}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 4ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
 
 
@@ -308,11 +308,11 @@ def main(kol_vo):
 
                 if result_trades != 'NONE' and result_volue != 'NONE':
                     bot.send_message(chat_main_id,
-                                     f'🟥📉<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 4ч: {kol_vo_nam}',
+                                     f"🟥📉<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 4ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
                 else:
                     bot.send_message(chat_main_id,
-                                     f'🟥📉<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n\n{zzzz_vol}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 4ч: {kol_vo_nam}',
+                                     f"🟥📉<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n\n{zzzz_vol}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 4ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
 
 
