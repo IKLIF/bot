@@ -167,7 +167,7 @@ def get_open_interest(symbol):
     params = {
         "symbol": symbol,
         "period": "5m",  # Интервал времени (5 минут, 1 час, 1 день и т. д.)
-        "limit": 12  # Количество записей
+        "limit": 24  # Количество записей
     }
 
     response = requests.get(base_url + endpoint, params=params)
@@ -211,9 +211,8 @@ def main(kol_vo):
             symbol__ = i['symbol']
 
             result_get_open_interest = get_open_interest(i['symbol'])
-            data_back = [result_get_open_interest[i]['sumOpenInterest'] for i in range(0, 6)]  # sumOpenInterestValue
-            data_back_vol = [result_get_open_interest[i]['sumOpenInterestValue'] for i in
-                             range(0, 6)]  # sumOpenInterestValue
+            data_back = [result_get_open_interest[i]['sumOpenInterest'] for i in range(0, 12)]  # sumOpenInterestValue
+            data_back_vol = [result_get_open_interest[i]['sumOpenInterestValue'] for i in range(0, 12)]  # sumOpenInterestValue
 
             data_back_sr = 0
             data_back_vol_sr = 0
@@ -224,21 +223,21 @@ def main(kol_vo):
             for i in data_back_vol:
                 data_back_vol_sr += float(i)
 
-            data_back_sr = data_back_sr / 6
-            data_back_vol_sr = data_back_vol_sr / 6
+            data_back_sr = data_back_sr / 12
+            data_back_vol_sr = data_back_vol_sr / 12
 
             data_now = (float(result_get_open_interest[-1]['sumOpenInterest']) + float(
                 result_get_open_interest[-2]['sumOpenInterest']) + float(
                 result_get_open_interest[-3]['sumOpenInterest']) + float(
                 result_get_open_interest[-4]['sumOpenInterest']) + float(
                 result_get_open_interest[-5]['sumOpenInterest']) + float(result_get_open_interest[-6][
-                                                                             'sumOpenInterest'])) / 6  # (float(result_get_open_interest[-1]['sumOpenInterest']) + float(result_get_open_interest[-2]['sumOpenInterest']) + float(result_get_open_interest[-3]['sumOpenInterest']) + float(result_get_open_interest[-4]['sumOpenInterest'])+ float(result_get_open_interest[-5]['sumOpenInterest'])+ float(result_get_open_interest[-6]['sumOpenInterest'])+ float(result_get_open_interest[-7]['sumOpenInterest'])+ float(result_get_open_interest[-8]['sumOpenInterest'])+ float(result_get_open_interest[-9]['sumOpenInterest'])+ float(result_get_open_interest[-10]['sumOpenInterest'])+ float(result_get_open_interest[-11]['sumOpenInterest'])+ float(result_get_open_interest[-12]['sumOpenInterest'])+ float(result_get_open_interest[-13]['sumOpenInterest'])+ float(result_get_open_interest[-14]['sumOpenInterest']))/14
+                                                                             'sumOpenInterest'])+ float(result_get_open_interest[-7]['sumOpenInterest'])+ float(result_get_open_interest[-8]['sumOpenInterest'])+ float(result_get_open_interest[-9]['sumOpenInterest'])+ float(result_get_open_interest[-10]['sumOpenInterest'])+ float(result_get_open_interest[-11]['sumOpenInterest'])+ float(result_get_open_interest[-12]['sumOpenInterest'])) / 12  # (float(result_get_open_interest[-1]['sumOpenInterest']) + float(result_get_open_interest[-2]['sumOpenInterest']) + float(result_get_open_interest[-3]['sumOpenInterest']) + float(result_get_open_interest[-4]['sumOpenInterest'])+ float(result_get_open_interest[-5]['sumOpenInterest'])+ float(result_get_open_interest[-6]['sumOpenInterest'])+ float(result_get_open_interest[-7]['sumOpenInterest'])+ float(result_get_open_interest[-8]['sumOpenInterest'])+ float(result_get_open_interest[-9]['sumOpenInterest'])+ float(result_get_open_interest[-10]['sumOpenInterest'])+ float(result_get_open_interest[-11]['sumOpenInterest'])+ float(result_get_open_interest[-12]['sumOpenInterest'])+ float(result_get_open_interest[-13]['sumOpenInterest'])+ float(result_get_open_interest[-14]['sumOpenInterest']))/14
             data_vol_now = (float(result_get_open_interest[-1]['sumOpenInterestValue']) + float(
                 result_get_open_interest[-2]['sumOpenInterestValue']) + float(
                 result_get_open_interest[-3]['sumOpenInterestValue']) + float(
                 result_get_open_interest[-4]['sumOpenInterestValue']) + float(
                 result_get_open_interest[-5]['sumOpenInterestValue']) + float(result_get_open_interest[-6][
-                                                                                  'sumOpenInterestValue'])) / 6  # (float(result_get_open_interest[-1]['sumOpenInterestValue']) + float(result_get_open_interest[-2]['sumOpenInterestValue']) + float(result_get_open_interest[-3]['sumOpenInterestValue']) + float(result_get_open_interest[-4]['sumOpenInterestValue'])+ float(result_get_open_interest[-5]['sumOpenInterestValue'])+ float(result_get_open_interest[-6]['sumOpenInterestValue'])+ float(result_get_open_interest[-7]['sumOpenInterestValue'])+ float(result_get_open_interest[-8]['sumOpenInterestValue'])+ float(result_get_open_interest[-9]['sumOpenInterestValue'])+ float(result_get_open_interest[-10]['sumOpenInterestValue'])+ float(result_get_open_interest[-11]['sumOpenInterestValue'])+ float(result_get_open_interest[-12]['sumOpenInterestValue'])+ float(result_get_open_interest[-13]['sumOpenInterestValue'])+ float(result_get_open_interest[-14]['sumOpenInterestValue']))/14
+                                                                                  'sumOpenInterestValue'])+ float(result_get_open_interest[-7]['sumOpenInterestValue'])+ float(result_get_open_interest[-8]['sumOpenInterestValue'])+ float(result_get_open_interest[-9]['sumOpenInterestValue'])+ float(result_get_open_interest[-10]['sumOpenInterestValue'])+ float(result_get_open_interest[-11]['sumOpenInterestValue'])+ float(result_get_open_interest[-12]['sumOpenInterestValue'])) / 12  # (float(result_get_open_interest[-1]['sumOpenInterestValue']) + float(result_get_open_interest[-2]['sumOpenInterestValue']) + float(result_get_open_interest[-3]['sumOpenInterestValue']) + float(result_get_open_interest[-4]['sumOpenInterestValue'])+ float(result_get_open_interest[-5]['sumOpenInterestValue'])+ float(result_get_open_interest[-6]['sumOpenInterestValue'])+ float(result_get_open_interest[-7]['sumOpenInterestValue'])+ float(result_get_open_interest[-8]['sumOpenInterestValue'])+ float(result_get_open_interest[-9]['sumOpenInterestValue'])+ float(result_get_open_interest[-10]['sumOpenInterestValue'])+ float(result_get_open_interest[-11]['sumOpenInterestValue'])+ float(result_get_open_interest[-12]['sumOpenInterestValue'])+ float(result_get_open_interest[-13]['sumOpenInterestValue'])+ float(result_get_open_interest[-14]['sumOpenInterestValue']))/14
 
             pr_all = (data_back_sr / data_now - 1) * 100
             pr_all = round(pr_all, 3)
