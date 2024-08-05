@@ -28,8 +28,8 @@ cursor.execute('CREATE TABLE IF NOT EXISTS parametrs ('
                ')')
 
 x0 = 0
-x1 = 2
-x2 = 2
+x1 = 0
+x2 = 0
 x3 = -4223979059
 cursor.execute('SELECT * FROM parametrs')
 if cursor.fetchone() == None:
@@ -83,7 +83,7 @@ def volue(symbol):
         all_sr = all_now/14
 
         #z = (x / y - 1) * 100
-        pr_all = (all_sr/all-1)*100
+        pr_all = (all_sr-all)/all_sr * 100#(data_vol_now - data_back_vol_sr)/data_vol_now * 100
         pr_all = round(pr_all, 3)
         return f'📌Volume: 👉 {pr_all}%'
 
@@ -134,7 +134,7 @@ def trades(symbol):
         all_sr = all_now/14
 
         #z = (x / y - 1) * 100
-        pr_all = (all_sr/all-1)*100
+        pr_all = (all_sr-all)/all_sr * 100#(all_sr/all-1)*100#(data_vol_now - data_back_vol_sr)/data_vol_now * 100
         pr_all = round(pr_all, 3)
 
 
@@ -167,12 +167,14 @@ def get_open_interest(symbol):
     params = {
         "symbol": symbol,
         "period": "5m",  # Интервал времени (5 минут, 1 час, 1 день и т. д.)
-        "limit": 9  # Количество записей
+        "limit": 48  # Количество записей
     }
 
     response = requests.get(base_url + endpoint, params=params)
     data = response.json()
-
+    print('-------------')
+    for i in data:
+        print(i)
     return data
 
 
@@ -211,8 +213,8 @@ def main(kol_vo):
             symbol__ = i['symbol']
 
             result_get_open_interest = get_open_interest(i['symbol'])
-            data_back = [result_get_open_interest[i]['sumOpenInterest'] for i in range(0, 6)]  # sumOpenInterestValue
-            data_back_vol = [result_get_open_interest[i]['sumOpenInterestValue'] for i in range(0, 6)]  # sumOpenInterestValue
+            data_back = [result_get_open_interest[i]['sumOpenInterest'] for i in range(44, 46)]  # sumOpenInterestValue
+            data_back_vol = [result_get_open_interest[i]['sumOpenInterestValue'] for i in range(44, 46)]  # sumOpenInterestValue
 
             data_back_sr = 0
             data_back_vol_sr = 0
@@ -223,24 +225,29 @@ def main(kol_vo):
             for i in data_back_vol:
                 data_back_vol_sr += float(i)
 
-            data_back_sr = data_back_sr / 6
-            data_back_vol_sr = data_back_vol_sr / 6
+            data_back_sr = data_back_sr / 2
+            data_back_vol_sr = data_back_vol_sr / 2
 
-            data_now = (float(result_get_open_interest[-1]['sumOpenInterest']) + float(
-                result_get_open_interest[-2]['sumOpenInterest']) + float(
-                result_get_open_interest[-3]['sumOpenInterest'])) / 3  # (float(result_get_open_interest[-1]['sumOpenInterest']) + float(result_get_open_interest[-2]['sumOpenInterest']) + float(result_get_open_interest[-3]['sumOpenInterest']) + float(result_get_open_interest[-4]['sumOpenInterest'])+ float(result_get_open_interest[-5]['sumOpenInterest'])+ float(result_get_open_interest[-6]['sumOpenInterest'])+ float(result_get_open_interest[-7]['sumOpenInterest'])+ float(result_get_open_interest[-8]['sumOpenInterest'])+ float(result_get_open_interest[-9]['sumOpenInterest'])+ float(result_get_open_interest[-10]['sumOpenInterest'])+ float(result_get_open_interest[-11]['sumOpenInterest'])+ float(result_get_open_interest[-12]['sumOpenInterest'])+ float(result_get_open_interest[-13]['sumOpenInterest'])+ float(result_get_open_interest[-14]['sumOpenInterest']))/14
-            data_vol_now = (float(result_get_open_interest[-1]['sumOpenInterestValue']) + float(
-                result_get_open_interest[-2]['sumOpenInterestValue']) + float(
-                result_get_open_interest[-3]['sumOpenInterestValue']))/ 3  # (float(result_get_open_interest[-1]['sumOpenInterestValue']) + float(result_get_open_interest[-2]['sumOpenInterestValue']) + float(result_get_open_interest[-3]['sumOpenInterestValue']) + float(result_get_open_interest[-4]['sumOpenInterestValue'])+ float(result_get_open_interest[-5]['sumOpenInterestValue'])+ float(result_get_open_interest[-6]['sumOpenInterestValue'])+ float(result_get_open_interest[-7]['sumOpenInterestValue'])+ float(result_get_open_interest[-8]['sumOpenInterestValue'])+ float(result_get_open_interest[-9]['sumOpenInterestValue'])+ float(result_get_open_interest[-10]['sumOpenInterestValue'])+ float(result_get_open_interest[-11]['sumOpenInterestValue'])+ float(result_get_open_interest[-12]['sumOpenInterestValue'])+ float(result_get_open_interest[-13]['sumOpenInterestValue'])+ float(result_get_open_interest[-14]['sumOpenInterestValue']))/14
+            data_now = (float(result_get_open_interest[-1]['sumOpenInterest'])) / 1  # (float(result_get_open_interest[-1]['sumOpenInterest']) + float(result_get_open_interest[-2]['sumOpenInterest']) + float(result_get_open_interest[-3]['sumOpenInterest']) + float(result_get_open_interest[-4]['sumOpenInterest'])+ float(result_get_open_interest[-5]['sumOpenInterest'])+ float(result_get_open_interest[-6]['sumOpenInterest'])+ float(result_get_open_interest[-7]['sumOpenInterest'])+ float(result_get_open_interest[-8]['sumOpenInterest'])+ float(result_get_open_interest[-9]['sumOpenInterest'])+ float(result_get_open_interest[-10]['sumOpenInterest'])+ float(result_get_open_interest[-11]['sumOpenInterest'])+ float(result_get_open_interest[-12]['sumOpenInterest'])+ float(result_get_open_interest[-13]['sumOpenInterest'])+ float(result_get_open_interest[-14]['sumOpenInterest']))/14
+            data_vol_now = (float(result_get_open_interest[-1]['sumOpenInterestValue']))/ 1  # (float(result_get_open_interest[-1]['sumOpenInterestValue']) + float(result_get_open_interest[-2]['sumOpenInterestValue']) + float(result_get_open_interest[-3]['sumOpenInterestValue']) + float(result_get_open_interest[-4]['sumOpenInterestValue'])+ float(result_get_open_interest[-5]['sumOpenInterestValue'])+ float(result_get_open_interest[-6]['sumOpenInterestValue'])+ float(result_get_open_interest[-7]['sumOpenInterestValue'])+ float(result_get_open_interest[-8]['sumOpenInterestValue'])+ float(result_get_open_interest[-9]['sumOpenInterestValue'])+ float(result_get_open_interest[-10]['sumOpenInterestValue'])+ float(result_get_open_interest[-11]['sumOpenInterestValue'])+ float(result_get_open_interest[-12]['sumOpenInterestValue'])+ float(result_get_open_interest[-13]['sumOpenInterestValue'])+ float(result_get_open_interest[-14]['sumOpenInterestValue']))/14
 
-            pr_all = (data_back_sr / data_now - 1) * 100
+            pr_all = (data_now - data_back_sr)/data_now * 100
             pr_all = round(pr_all, 3)
-
-            pr_vol_all = (data_back_vol_sr / data_vol_now - 1) * 100
+            print(pr_all)
+            pr_vol_all = (data_vol_now - data_back_vol_sr)/data_vol_now * 100#(data_back_vol_sr / data_vol_now - 1) * 100
             pr_vol_all = round(pr_vol_all, 3)
 
-            zzzz = f'📍Открытый интерес:👉 {pr_all}%'
-            zzzz_vol = f'📍Общий открытый интерес:👉 {pr_vol_all}%'
+            pr_4h = (float(result_get_open_interest[-1]['sumOpenInterest']) - float(result_get_open_interest[1]['sumOpenInterest']))/float(result_get_open_interest[-1]['sumOpenInterest'])*100
+            pr_4h = round(pr_4h, 3)
+            if pr_4h>0:
+                txt_pr_4h =f'↗️<i>OI: Chg%4h=</i> <b><u>{pr_4h}%</u></b>\n'
+            elif pr_4h<0:
+                txt_pr_4h =f'↘️<i>OI: Chg%4h=</i> <b><u>{pr_4h}%</u></b>\n'
+            else:
+                txt_pr_4h =f''
+
+            zzzz = f'📍Открытый интерес: 👉 {pr_all}%'
+            zzzz_vol = f'📍Общий открытый интерес: 👉 {pr_vol_all}%'
 
             markup = types.InlineKeyboardMarkup()
 
@@ -271,11 +278,11 @@ def main(kol_vo):
 
                 if result_trades != 'NONE' and result_volue != 'NONE':
                     bot.send_message(chat_main_id,
-                                     f"🟩📈<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
+                                     f"🟩📈<code>{result_get_open_interest[0]['symbol']}</code> \n#{result_get_open_interest[0]['symbol']} #UP\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n{txt_pr_4h}<i>Сoin: Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
                 else:
                     bot.send_message(chat_main_id,
-                                     f"🟩📈<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n\n{zzzz_vol}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
+                                     f"🟩📈<code>{result_get_open_interest[0]['symbol']}</code> \n#{result_get_open_interest[0]['symbol']} #UP\n\n{zzzz}\n{zzzz_vol}\n\n{txt_pr_4h}<i>Сoin: Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
 
 
@@ -301,11 +308,11 @@ def main(kol_vo):
 
                 if result_trades != 'NONE' and result_volue != 'NONE':
                     bot.send_message(chat_main_id,
-                                     f"🟥📉<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
+                                     f"🟥📉<code>{result_get_open_interest[0]['symbol']}</code> \n#{result_get_open_interest[0]['symbol']} #DOWN\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n{txt_pr_4h}<i>Сoin: Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
                 else:
                     bot.send_message(chat_main_id,
-                                     f"🟥📉<code>{result_get_open_interest[0]['symbol']}</code> #{result_get_open_interest[0]['symbol']}\n\n{zzzz}\n\n{zzzz_vol}\n\n<i>Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
+                                     f"🟥📉<code>{result_get_open_interest[0]['symbol']}</code> \n#{result_get_open_interest[0]['symbol']} #DOWN\n\n{zzzz}\n{zzzz_vol}\n\n{txt_pr_4h}<i>Сoin: Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
 
 
@@ -322,8 +329,7 @@ def main(kol_vo):
 
 @bot.message_handler(commands=['start', 'help'])
 def start(message):
-    bot.send_message(message.chat.id, '/UPDATE\n'
-                                      '/PARAMETERS')
+    bot.send_message(message.chat.id, 'Мы приветствуем тебя трейдер. На все вопросы я отвечаю в группе👍')
 
 @bot.message_handler(commands=['PARAMETERS'])
 def PARAMETERS(message):
