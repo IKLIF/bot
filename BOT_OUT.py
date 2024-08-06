@@ -494,8 +494,8 @@ def main_Bybit(kol_vo):
 
                 time.sleep(3)
         except Exception as e:
-            print('\nОшибка:\n', traceback.format_exc())
-            print(i)
+            #print('\nОшибка:\n', traceback.format_exc())
+            #print(i)
             pass
 
 
