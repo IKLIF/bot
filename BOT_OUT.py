@@ -7,7 +7,7 @@ import time
 import sqlite3
 from threading import Thread
 
-API = '7322937059:AAHWbYHdmMXhZxNuBK8ujPC8agYuFScxTkw'
+API = '7442583453:AAEEhPn5qFnc6TvYjwFGVyo93aIL4GvD6d8'
 bot = telebot.TeleBot(API)
 
 conn = sqlite3.connect('OI.db', check_same_thread=False)
