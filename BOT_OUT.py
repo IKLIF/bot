@@ -4,7 +4,6 @@ from telebot import types
 import threading
 import requests
 import time
-import traceback
 import sqlite3
 from threading import Thread
 
