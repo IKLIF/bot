@@ -44,6 +44,8 @@ if cursor.fetchone() == None:
 conn.close()
 
 
+
+
 def volue(symbol):
     try:
         url = f'https://api.binance.com/api/v3/klines'
@@ -483,9 +485,13 @@ def main_Bybit(kol_vo):
 
 @bot.message_handler(commands=['start', 'help'])
 def start(message):
-    bot.send_message(message.chat.id, 'Мы приветствуем тебя трейдер. На все вопросы я отвечаю в группе👍')
+    bot.send_message(message.chat.id, 'Мы приветствуем тебя трейдер. На все вопросы я отвечаю в группе👍\n\n'
+                                      '/PARBI - Параметры на Binance\n\n'
+                                      '/UPDBI - Обновить параметры Binance\n\n'
+                                      '/PARBY - Параметры на Bybit\n\n'
+                                      '/UPDBY - Обновить параметры Bybit')
 
-@bot.message_handler(commands=['PARAMETERSbinanse'])
+@bot.message_handler(commands=['PARBI'])
 def PARAMETERS(message):
     conn = sqlite3.connect('OI.db', check_same_thread=False)
     cursor = conn.cursor()
@@ -502,7 +508,7 @@ def PARAMETERS(message):
     bot.send_message(message.chat.id, f'NOW parameters:\n\n1: {pr_max} - x>n\n\n2: {pr_min} - x<-n\n\n3: {chat_main_id}')
 
 
-@bot.message_handler(commands=['UPDATEbinanse'])
+@bot.message_handler(commands=['UPDBI'])
 def UPDATE(message):
     conn = sqlite3.connect('OI.db', check_same_thread=False)
     cursor = conn.cursor()
@@ -586,7 +592,7 @@ def save(message, data):
     a = telebot.types.ReplyKeyboardRemove()
     bot.send_message(message.chat.id, f'SAVE parameters:\n\n1: {new_pr_max} - x>n\n\n2: {new_pr_min} - x<-n\n\n3: {new_chat_main_id}', reply_markup=a)
 
-@bot.message_handler(commands=['PARAMETERSbybit'])
+@bot.message_handler(commands=['PARBY'])
 def PARAMETERS(message):
     conn = sqlite3.connect('OI.db', check_same_thread=False)
     cursor = conn.cursor()
@@ -603,7 +609,7 @@ def PARAMETERS(message):
     bot.send_message(message.chat.id, f'NOW parameters:\n\n1: {pr_max} - x>n\n\n2: {pr_min} - x<-n\n\n3: {chat_main_id}')
 
 
-@bot.message_handler(commands=['UPDATEbybit'])
+@bot.message_handler(commands=['UPDBY'])
 def UPDATE(message):
     conn = sqlite3.connect('OI.db', check_same_thread=False)
     cursor = conn.cursor()
@@ -690,11 +696,31 @@ def save_bybit(message, data):
 
 
 
+
+def many():
+    conn = sqlite3.connect('OI.db', check_same_thread=False)
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * FROM parametrs_b WHERE nam = ?', (0,))
+    result = cursor.fetchone()
+
+    pr_max = result[1]
+    pr_min = result[2]
+    chat_main_id = result[3]
+
+    conn.close()
+
+    bot.send_message(chat_main_id,'')
+    time.sleep(2700)
+
+
 def GO():
     thread1 = Thread(target=start_main)
     thread1.start()
     thread2 = Thread(target=start_main_Bybit)
     thread2.start()
+    #thread3 = Thread(target=many)
+    #thread3.start()
     #Process(target=start_main).start()
     #Process(target=start_main_Bybit).start()
 
