@@ -32,7 +32,7 @@ x1 = 2.5
 x2 = 2.5
 x1_ = 8
 x2_ = 8
-x3 = -4223979059
+x3 = -1002208711059
 cursor.execute('SELECT * FROM parametrs')
 if cursor.fetchone() == None:
     cursor.execute('INSERT INTO parametrs (nam, pr_max, pr_min, chat_main_id) VALUES (?,?,?,?)', (x0, x1,x2,x3,))
@@ -228,9 +228,10 @@ def main(kol_vo):
                                             url=f"https://ru.tradingview.com/chart/{result_get_open_interest[0]['symbol']}.P")
             b2 = types.InlineKeyboardButton(text='CG',
                                             url=f"https://www.coinglass.com/tv/ru/Binance_{result_get_open_interest[0]['symbol']}")
-
+            b3 = types.InlineKeyboardButton(text='ПЕРЕХОДИТЬ В БОТ',
+                                            url=f"https://t.me/+JnErqgdsSuBmZWRi")
             markup.add(b1, b2)
-
+            markup.add(b3)
             if pr_all > pr_max:
 
                 kol_vo[-1].append(result_get_open_interest[0]['symbol'])
@@ -259,7 +260,7 @@ def main(kol_vo):
                                      parse_mode='HTML', reply_markup=markup)
 
 
-                time.sleep(3)
+                time.sleep(2)
             if pr_all < -pr_min:
 
                 kol_vo[-1].append(result_get_open_interest[0]['symbol'])
@@ -289,7 +290,7 @@ def main(kol_vo):
                                      parse_mode='HTML', reply_markup=markup)
 
 
-                time.sleep(3)
+                time.sleep(2)
         except Exception as e:
             #print('\nОшибка:\n', traceback.format_exc())
             #print(i)
@@ -401,8 +402,10 @@ def main_Bybit(kol_vo):
                                             url=f"https://ru.tradingview.com/chart/{symbol__}.P")
             b2 = types.InlineKeyboardButton(text='CG',
                                             url=f"https://www.coinglass.com/tv/ru/Bybit_{symbol__}")
-
+            b3 = types.InlineKeyboardButton(text='ПЕРЕХОДИТЬ В БОТ',
+                                            url=f"https://t.me/+JnErqgdsSuBmZWRi")
             markup.add(b1, b2)
+            markup.add(b3)
 
             if pr_all > pr_max:
 
@@ -432,7 +435,7 @@ def main_Bybit(kol_vo):
                                      parse_mode='HTML', reply_markup=markup)
 
 
-                time.sleep(3)
+                time.sleep(2)
             if pr_all < -pr_min:
 
                 kol_vo[-1].append(symbol__)
@@ -462,7 +465,7 @@ def main_Bybit(kol_vo):
                                      parse_mode='HTML', reply_markup=markup)
 
 
-                time.sleep(3)
+                time.sleep(2)
         except Exception as e:
             #print('\nОшибка:\n', traceback.format_exc())
             #print(i)
@@ -699,6 +702,7 @@ if __name__ == '__main__':
     thread = threading.Thread(target=GO)
     thread.start()
     bot.polling(none_stop=True, timeout=123)
+
 
 
 
