@@ -6,6 +6,8 @@ import requests
 import time
 import sqlite3
 from threading import Thread
+import json
+import traceback
 
 API = '7442583453:AAEEhPn5qFnc6TvYjwFGVyo93aIL4GvD6d8'
 bot = telebot.TeleBot(API)
@@ -27,28 +29,58 @@ cursor.execute('CREATE TABLE IF NOT EXISTS parametrs_b ('
                'chat_main_id INTEGER'
                ')')
 
-
+cursor.execute('CREATE TABLE IF NOT EXISTS istoria ('
+               'symbol INTEGER,'
+               'data TEXT'
+               ')')
 
 x0 = 0
 x1 = 2.5
 x2 = 2.5
-x1_ = 8
-x2_ = 8
+x1_ = 10
+x2_ = 10
 x3 = -1002208711059
 
+kolichestvo = 28800
 
 cursor.execute('SELECT * FROM parametrs')
 if cursor.fetchone() == None:
     cursor.execute('INSERT INTO parametrs (nam, pr_max, pr_min, chat_main_id) VALUES (?,?,?,?)', (x0, x1,x2,x3,))
     conn.commit()
-    cursor.execute('INSERT INTO parametrs_b (nam, pr_max, pr_min, chat_main_id) VALUES (?,?,?,?)', (x0, x1_,x2_,x3,))
+    cursor.execute('INSERT INTO parametrs_b (nam, pr_max, pr_min, chat_main_id) VALUES (?,?,?,?)', (x0, x1,x2,x3,))
+    conn.commit()
+    json_txt_no = []
+    json_txt = json.dumps(json_txt_no)
+    cursor.execute('INSERT INTO istoria (symbol, data) VALUES (?,?)', (0, json_txt,))
     conn.commit()
 
 
+conn.close()
 
 
+def istoria_out():
+    conn = sqlite3.connect('OI.db', check_same_thread=False)
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * FROM istoria WHERE symbol = ?', (0,))
+    result = cursor.fetchone()
+
+    massiv = result[1]
+    massiv = json.loads(massiv)
+
+    conn.close()
+    return massiv
 
 
+def istoria_in(data):
+    conn = sqlite3.connect('OI.db', check_same_thread=False)
+    cursor = conn.cursor()
+
+    json_txt = json.dumps(data)
+    cursor.execute("UPDATE istoria SET data = ? WHERE symbol = ?", (json_txt, 0))
+    conn.commit()
+
+    conn.close()
 
 def volue(symbol):
     try:
@@ -115,7 +147,6 @@ def trades(symbol):
 
         x = 0
         for i in data_back:
-            print(i[8])
             x += i[8]
 
 
@@ -164,7 +195,6 @@ def start_main():
 
 
 def main(kol_vo):
-    kol_vo_nam = 0
     conn = sqlite3.connect('OI.db', check_same_thread=False)
     cursor = conn.cursor()
 
@@ -215,9 +245,9 @@ def main(kol_vo):
             pr_4h = (float(result_get_open_interest[-1]['sumOpenInterest']) - float(result_get_open_interest[1]['sumOpenInterest']))/float(result_get_open_interest[-1]['sumOpenInterest'])*100
             pr_4h = round(pr_4h, 3)
             if pr_4h>0:
-                txt_pr_4h =f'↗️<i>OI: Chg%4h=</i> <b><u>{pr_4h}%</u></b>\n'
+                txt_pr_4h =f'↗️<i>OI: Chg % 4h=</i> <b><u>{pr_4h}%</u></b>\n'
             elif pr_4h<0:
-                txt_pr_4h =f'↘️<i>OI: Chg%4h=</i> <b><u>{pr_4h}%</u></b>\n'
+                txt_pr_4h =f'↘️<i>OI: Chg % 4h=</i> <b><u>{pr_4h}%</u></b>\n'
             else:
                 txt_pr_4h =f''
 
@@ -230,11 +260,24 @@ def main(kol_vo):
                                             url=f"https://ru.tradingview.com/chart/{result_get_open_interest[0]['symbol']}.P")
             b2 = types.InlineKeyboardButton(text='CG',
                                             url=f"https://www.coinglass.com/tv/ru/Binance_{result_get_open_interest[0]['symbol']}")
-            b3 = types.InlineKeyboardButton(text='ПЕРЕХОДИТЬ В БОТ',
+            b3 = types.InlineKeyboardButton(text='ПЕРЕХОД В БОТ',
                                             url=f"https://t.me/+JnErqgdsSuBmZWRi")
             markup.add(b1, b2)
             markup.add(b3)
             if pr_all > pr_max:
+                kol_vo = istoria_out()
+                t = time.time()
+                kol_vo_nam = 0
+                for kol in kol_vo:
+                    if kol['symbol'] == result_get_open_interest[0]['symbol'] and kol['time']+kolichestvo >= t:
+                        kol_vo_nam += 1
+
+                kol_vo.append({'symbol':result_get_open_interest[0]['symbol'], 'time': t,})
+                dalat = [i for i in kol_vo if i['time']+kolichestvo < t]
+
+                for i in dalat:
+                    kol_vo.remove(i)
+                istoria_in(kol_vo)
 
                 result_trades = trades(symbol__)
                 if result_trades == None:
@@ -246,17 +289,29 @@ def main(kol_vo):
 
                 if result_trades != 'NONE' and result_volue != 'NONE':
                     bot.send_message(chat_main_id,
-                                     f"🟩📈<code>{result_get_open_interest[0]['symbol']}</code> \n🟡#Binance\n#{result_get_open_interest[0]['symbol']} #UP\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n{txt_pr_4h}<i>Сoin: Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
+                                     f"🟩📈<code>{result_get_open_interest[0]['symbol']}</code> \n🟡#Binance\n#{result_get_open_interest[0]['symbol']}   #UP\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n{txt_pr_4h}<i>Сoin: Chg % 24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 8ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
                 else:
                     bot.send_message(chat_main_id,
-                                     f"🟩📈<code>{result_get_open_interest[0]['symbol']}</code> \n🟡#Binance\n#{result_get_open_interest[0]['symbol']} #UP\n\n{zzzz}\n{zzzz_vol}\n\n{txt_pr_4h}<i>Сoin: Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
+                                     f"🟩📈<code>{result_get_open_interest[0]['symbol']}</code> \n🟡#Binance\n#{result_get_open_interest[0]['symbol']}   #UP\n\n{zzzz}\n{zzzz_vol}\n\n{txt_pr_4h}<i>Сoin: Chg % 24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 8ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
 
 
                 time.sleep(2)
             if pr_all < -pr_min:
+                kol_vo = istoria_out()
+                t = time.time()
+                kol_vo_nam = 0
+                for kol in kol_vo:
+                    if kol['symbol'] == result_get_open_interest[0]['symbol'] and kol['time']+kolichestvo >= t:
+                        kol_vo_nam += 1
 
+                kol_vo.append({'symbol':result_get_open_interest[0]['symbol'], 'time': t,})
+                dalat = [i for i in kol_vo if i['time']+kolichestvo < t]
+
+                for i in dalat:
+                    kol_vo.remove(i)
+                istoria_in(kol_vo)
 
                 result_trades = trades(symbol__)
                 if result_trades == None:
@@ -268,18 +323,18 @@ def main(kol_vo):
 
                 if result_trades != 'NONE' and result_volue != 'NONE':
                     bot.send_message(chat_main_id,
-                                     f"🟥📉<code>{result_get_open_interest[0]['symbol']}</code> \n🟡#Binance\n#{result_get_open_interest[0]['symbol']} #DOWN\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n{txt_pr_4h}<i>Сoin: Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
+                                     f"🟥📉<code>{result_get_open_interest[0]['symbol']}</code> \n🟡#Binance\n#{result_get_open_interest[0]['symbol']}   #DOWN\n\n{zzzz}\n{zzzz_vol}\n\n{result_volue}\n{result_trades}\n\n{txt_pr_4h}<i>Сoin: Chg % 24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 8ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
                 else:
                     bot.send_message(chat_main_id,
-                                     f"🟥📉<code>{result_get_open_interest[0]['symbol']}</code> \n🟡#Binance\n#{result_get_open_interest[0]['symbol']} #DOWN\n\n{zzzz}\n{zzzz_vol}\n\n{txt_pr_4h}<i>Сoin: Chg%24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 6ч: {kol_vo_nam}",
+                                     f"🟥📉<code>{result_get_open_interest[0]['symbol']}</code> \n🟡#Binance\n#{result_get_open_interest[0]['symbol']}   #DOWN\n\n{zzzz}\n{zzzz_vol}\n\n{txt_pr_4h}<i>Сoin: Chg % 24h=</i> <b><u>{priceChangePercent}%</u></b>\n За 8ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
 
 
                 time.sleep(2)
         except Exception as e:
-            #print('\nОшибка:\n', traceback.format_exc())
-            #print(i)
+            print('\nОшибка:\n', traceback.format_exc())
+            print(i)
             pass
 
 
@@ -317,19 +372,17 @@ def sombol_bybit():
     tickers_spot = session.get_tickers(category="linear")
     data_tickers = tickers_spot['result']['list']
 
+    data_tickers = [i for i in data_tickers if i['symbol'][-1] == 'T']
     return data_tickers
 
 #sombol_bybit()
 #get_open_interest_bybit('BTCUSDT')
-
 
 def start_main_Bybit():
     kol_vo =[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
     main_Bybit(kol_vo)
 
 def main_Bybit(kol_vo):
-    kol_vo_nam = 0
-
     conn = sqlite3.connect('OI.db', check_same_thread=False)
     cursor = conn.cursor()
 
@@ -371,9 +424,9 @@ def main_Bybit(kol_vo):
             pr_4h = (float(result_get_open_interest_bybit[-1]['openInterest']) - float(result_get_open_interest_bybit[1]['openInterest']))/float(result_get_open_interest_bybit[-1]['openInterest'])*100
             pr_4h = round(pr_4h, 3)
             if pr_4h>0:
-                txt_pr_4h =f'↗️<i>OI: Chg%4h=</i> <b><u>{pr_4h}%</u></b>\n'
+                txt_pr_4h =f'↗️<i>OI: Chg % 4h=</i> <b><u>{pr_4h}%</u></b>\n'
             elif pr_4h<0:
-                txt_pr_4h =f'↘️<i>OI: Chg%4h=</i> <b><u>{pr_4h}%</u></b>\n'
+                txt_pr_4h =f'↘️<i>OI: Chg % 4h=</i> <b><u>{pr_4h}%</u></b>\n'
             else:
                 txt_pr_4h =f''
 
@@ -386,12 +439,25 @@ def main_Bybit(kol_vo):
                                             url=f"https://ru.tradingview.com/chart/{symbol__}.P")
             b2 = types.InlineKeyboardButton(text='CG',
                                             url=f"https://www.coinglass.com/tv/ru/Bybit_{symbol__}")
-            b3 = types.InlineKeyboardButton(text='ПЕРЕХОДИТЬ В БОТ',
+            b3 = types.InlineKeyboardButton(text='ПЕРЕХОД В БОТ',
                                             url=f"https://t.me/+JnErqgdsSuBmZWRi")
             markup.add(b1, b2)
             markup.add(b3)
 
             if pr_all > pr_max:
+                kol_vo = istoria_out()
+                t = time.time()
+                kol_vo_nam = 0
+                for kol in kol_vo:
+                    if kol['symbol'] == symbol__ and kol['time']+kolichestvo >= t:
+                        kol_vo_nam += 1
+
+                kol_vo.append({'symbol':symbol__, 'time': t,})
+                dalat = [i for i in kol_vo if i['time']+kolichestvo < t]
+
+                for i in dalat:
+                    kol_vo.remove(i)
+                istoria_in(kol_vo)
 
                 #result_trades = trades(symbol__)
                 #if result_trades == None:
@@ -407,12 +473,25 @@ def main_Bybit(kol_vo):
                 #                     parse_mode='HTML', reply_markup=markup)
                 #else:
                 bot.send_message(chat_main_id,
-                                     f"🟩📈<code>{symbol__}</code> \n⚫️#ByBit \n#{symbol__} #UP\n\n{zzzz}\n\n{txt_pr_4h}<i>Сoin: Chg%24h=</i> <b><u>{round(float(data_i['price24hPcnt']), 3)}%</u></b>\n За 6ч: {kol_vo_nam}",
+                                     f"🟩📈<code>{symbol__}</code> \n⚫️#ByBit \n#{symbol__}   #UP\n\n{zzzz}\n\n{txt_pr_4h}<i>Сoin: Chg % 24h=</i> <b><u>{round(float(data_i['price24hPcnt']), 3)}%</u></b>\n За 8ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
 
 
                 time.sleep(2)
             if pr_all < -pr_min:
+                kol_vo = istoria_out()
+                t = time.time()
+                kol_vo_nam = 0
+                for kol in kol_vo:
+                    if kol['symbol'] == symbol__ and kol['time']+kolichestvo >= t:
+                        kol_vo_nam += 1
+
+                kol_vo.append({'symbol':symbol__, 'time': t,})
+                dalat = [i for i in kol_vo if i['time']+kolichestvo < t]
+
+                for i in dalat:
+                    kol_vo.remove(i)
+                istoria_in(kol_vo)
 
 
                 #result_trades = trades(symbol__)
@@ -429,14 +508,14 @@ def main_Bybit(kol_vo):
                                      #parse_mode='HTML', reply_markup=markup)
                 #else:
                 bot.send_message(chat_main_id,
-                                     f"🟥📉<code>{symbol__}</code> \n⚫️#ByBit \n#{symbol__} #DOWN\n\n{zzzz}\n\n{txt_pr_4h}<i>Сoin: Chg%24h=</i> <b><u>{round(float(data_i['price24hPcnt']), 3)}%</u></b>\n За 6ч: {kol_vo_nam}",
+                                     f"🟥📉<code>{symbol__}</code> \n⚫️#ByBit \n#{symbol__}   #DOWN\n\n{zzzz}\n\n{txt_pr_4h}<i>Сoin: Chg % 24h=</i> <b><u>{round(float(data_i['price24hPcnt']), 3)}%</u></b>\n За 8ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
 
 
                 time.sleep(2)
         except Exception as e:
-            #print('\nОшибка:\n', traceback.format_exc())
-            #print(i)
+            print('\nОшибка:\n', traceback.format_exc())
+            print(i)
             pass
 
 
@@ -681,9 +760,9 @@ def many():
 
 
 def GO():
-    thread1 = Thread(target=start_main())
+    thread1 = Thread(target=start_main)
     thread1.start()
-    thread2 = Thread(target=start_main_Bybit())
+    thread2 = Thread(target=start_main_Bybit)
     thread2.start()
     #thread3 = Thread(target=many)
     #thread3.start()
@@ -694,17 +773,3 @@ if __name__ == '__main__':
     thread = threading.Thread(target=GO)
     thread.start()
     bot.polling(none_stop=True, timeout=123)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
