@@ -5,7 +5,6 @@ import threading
 import requests
 import time
 import sqlite3
-import json
 from threading import Thread
 
 API = '7442583453:AAEEhPn5qFnc6TvYjwFGVyo93aIL4GvD6d8'
@@ -28,10 +27,7 @@ cursor.execute('CREATE TABLE IF NOT EXISTS parametrs_b ('
                'chat_main_id INTEGER'
                ')')
 
-cursor.execute('CREATE TABLE IF NOT EXISTS istoria ('
-               'symbol INTEGER,'
-               'data TEXT'
-               ')')
+
 
 x0 = 0
 x1 = 2.5
@@ -40,46 +36,19 @@ x1_ = 8
 x2_ = 8
 x3 = -1002208711059
 
-kolichestvo = 28800
 
 cursor.execute('SELECT * FROM parametrs')
 if cursor.fetchone() == None:
     cursor.execute('INSERT INTO parametrs (nam, pr_max, pr_min, chat_main_id) VALUES (?,?,?,?)', (x0, x1,x2,x3,))
     conn.commit()
-    cursor.execute('INSERT INTO parametrs_b (nam, pr_max, pr_min, chat_main_id) VALUES (?,?,?,?)', (x0, x1,x2,x3,))
-    conn.commit()
-    json_txt_no = []
-    json_txt = json.dumps(json_txt_no)
-    cursor.execute('INSERT INTO istoria (symbol, data) VALUES (?,?)', (0, json_txt,))
+    cursor.execute('INSERT INTO parametrs_b (nam, pr_max, pr_min, chat_main_id) VALUES (?,?,?,?)', (x0, x1_,x2_,x3,))
     conn.commit()
 
 
-conn.close()
 
 
-def istoria_out():
-    conn = sqlite3.connect('OI.db', check_same_thread=False)
-    cursor = conn.cursor()
-
-    cursor.execute('SELECT * FROM istoria WHERE symbol = ?', (0,))
-    result = cursor.fetchone()
-
-    massiv = result[1]
-    massiv = json.loads(massiv)
-
-    conn.close()
-    return massiv
 
 
-def istoria_in(data):
-    conn = sqlite3.connect('OI.db', check_same_thread=False)
-    cursor = conn.cursor()
-
-    json_txt = json.dumps(data)
-    cursor.execute("UPDATE istoria SET data = ? WHERE symbol = ?", (json_txt, 0))
-    conn.commit()
-
-    conn.close()
 
 def volue(symbol):
     try:
@@ -195,6 +164,7 @@ def start_main():
 
 
 def main(kol_vo):
+    kol_vo_nam = 0
     conn = sqlite3.connect('OI.db', check_same_thread=False)
     cursor = conn.cursor()
 
@@ -265,19 +235,6 @@ def main(kol_vo):
             markup.add(b1, b2)
             markup.add(b3)
             if pr_all > pr_max:
-                kol_vo = istoria_out()
-                t = time.time()
-                kol_vo_nam = 0
-                for kol in kol_vo:
-                    if kol['symbol'] == result_get_open_interest[0]['symbol'] and kol['time']+kolichestvo >= t:
-                        kol_vo_nam += 1
-
-                kol_vo.append({'symbol':result_get_open_interest[0]['symbol'], 'time': t,})
-                dalat = [i for i in kol_vo if i['time']+kolichestvo >= t]
-
-                for i in dalat:
-                    kol_vo.remove(i)
-                istoria_in(kol_vo)
 
                 result_trades = trades(symbol__)
                 if result_trades == None:
@@ -299,19 +256,7 @@ def main(kol_vo):
 
                 time.sleep(2)
             if pr_all < -pr_min:
-                kol_vo = istoria_out()
-                t = time.time()
-                kol_vo_nam = 0
-                for kol in kol_vo:
-                    if kol['symbol'] == result_get_open_interest[0]['symbol'] and kol['time']+kolichestvo >= t:
-                        kol_vo_nam += 1
 
-                kol_vo.append({'symbol':result_get_open_interest[0]['symbol'], 'time': t,})
-                dalat = [i for i in kol_vo if i['time']+kolichestvo >= t]
-
-                for i in dalat:
-                    kol_vo.remove(i)
-                istoria_in(kol_vo)
 
                 result_trades = trades(symbol__)
                 if result_trades == None:
@@ -377,11 +322,14 @@ def sombol_bybit():
 #sombol_bybit()
 #get_open_interest_bybit('BTCUSDT')
 
+
 def start_main_Bybit():
     kol_vo =[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
     main_Bybit(kol_vo)
 
 def main_Bybit(kol_vo):
+    kol_vo_nam = 0
+
     conn = sqlite3.connect('OI.db', check_same_thread=False)
     cursor = conn.cursor()
 
@@ -444,19 +392,6 @@ def main_Bybit(kol_vo):
             markup.add(b3)
 
             if pr_all > pr_max:
-                kol_vo = istoria_out()
-                t = time.time()
-                kol_vo_nam = 0
-                for kol in kol_vo:
-                    if kol['symbol'] == symbol__ and kol['time']+kolichestvo >= t:
-                        kol_vo_nam += 1
-
-                kol_vo.append({'symbol':symbol__, 'time': t,})
-                dalat = [i for i in kol_vo if i['time']+kolichestvo >= t]
-
-                for i in dalat:
-                    kol_vo.remove(i)
-                istoria_in(kol_vo)
 
                 #result_trades = trades(symbol__)
                 #if result_trades == None:
@@ -478,19 +413,6 @@ def main_Bybit(kol_vo):
 
                 time.sleep(2)
             if pr_all < -pr_min:
-                kol_vo = istoria_out()
-                t = time.time()
-                kol_vo_nam = 0
-                for kol in kol_vo:
-                    if kol['symbol'] == symbol__ and kol['time']+kolichestvo >= t:
-                        kol_vo_nam += 1
-
-                kol_vo.append({'symbol':symbol__, 'time': t,})
-                dalat = [i for i in kol_vo if i['time']+kolichestvo >= t]
-
-                for i in dalat:
-                    kol_vo.remove(i)
-                istoria_in(kol_vo)
 
 
                 #result_trades = trades(symbol__)
@@ -759,9 +681,9 @@ def many():
 
 
 def GO():
-    thread1 = Thread(target=start_main)
+    thread1 = Thread(target=start_main())
     thread1.start()
-    thread2 = Thread(target=start_main_Bybit)
+    thread2 = Thread(target=start_main_Bybit())
     thread2.start()
     #thread3 = Thread(target=many)
     #thread3.start()
@@ -772,6 +694,8 @@ if __name__ == '__main__':
     thread = threading.Thread(target=GO)
     thread.start()
     bot.polling(none_stop=True, timeout=123)
+
+
 
 
 
