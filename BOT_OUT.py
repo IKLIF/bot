@@ -473,7 +473,7 @@ def main_Bybit(kol_vo):
                 #                     parse_mode='HTML', reply_markup=markup)
                 #else:
                 bot.send_message(chat_main_id,
-                                     f"🟩📈<code>{symbol__}</code> \n⚫️#ByBit \n#{symbol__}   #UP\n\n{zzzz}\n\n{txt_pr_4h}<i>Сoin: Chg % 24h=</i> <b><u>{round(float(data_i['price24hPcnt']*100), 3)}%</u></b>\n За 8ч: {kol_vo_nam}",
+                                     f"🟩📈<code>{symbol__}</code> \n⚫️#ByBit \n#{symbol__}   #UP\n\n{zzzz}\n\n{txt_pr_4h}<i>Сoin: Chg % 24h=</i> <b><u>{round(float(data_i['price24hPcnt'])*100, 3)}%</u></b>\n За 8ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
 
 
@@ -508,7 +508,7 @@ def main_Bybit(kol_vo):
                                      #parse_mode='HTML', reply_markup=markup)
                 #else:
                 bot.send_message(chat_main_id,
-                                     f"🟥📉<code>{symbol__}</code> \n⚫️#ByBit \n#{symbol__}   #DOWN\n\n{zzzz}\n\n{txt_pr_4h}<i>Сoin: Chg % 24h=</i> <b><u>{round(float(data_i['price24hPcnt']*100), 3)}%</u></b>\n За 8ч: {kol_vo_nam}",
+                                     f"🟥📉<code>{symbol__}</code> \n⚫️#ByBit \n#{symbol__}   #DOWN\n\n{zzzz}\n\n{txt_pr_4h}<i>Сoin: Chg % 24h=</i> <b><u>{round(float(data_i['price24hPcnt'])*100, 3)}%</u></b>\n За 8ч: {kol_vo_nam}",
                                      parse_mode='HTML', reply_markup=markup)
 
 
