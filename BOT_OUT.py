@@ -222,15 +222,15 @@ def main(kol_vo):
                 priceChangePercent = round(float(i['priceChangePercent']), 1)
                 symbol__ = i['symbol']
 
-                symbol__black = ['FRONTUSDT', 'MATICUSDT']
+                symbol__black0 = ["FRONTUSDT", "MATICUSDT"]
 
-                symbol__back = True
+                symbol__back1 = True
 
-                for asd in symbol__black:
+                for asd in symbol__black0:
                     if symbol__ == asd:
-                        symbol__back = False
+                        symbol__back1 = False
 
-                if symbol__back == True:
+                if symbol__back1 == True:
                     result_get_open_interest = get_open_interest(i['symbol'])
                     if result_get_open_interest != []:
                         data_back = [result_get_open_interest[i]['sumOpenInterest'] for i in range(44, 46)]  # sumOpenInterestValue
