@@ -538,7 +538,7 @@ def main_Bybit(kol_vo):
             except Exception as e:
                 print('\nОшибка:\n', traceback.format_exc())
                 print(i)
-                bot.send_message(-4565644547, f'{i['symbol']}\n{str(f'\nОшибка:\n{traceback.format_exc()}')}')
+                bot.send_message(-4565644547, f'{i}\n{str(f'\nОшибка:\n{traceback.format_exc()}')}')
                 pass
 
 
